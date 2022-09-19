@@ -38,7 +38,7 @@ LDI	R25, 0b0000_0010	; Vincularemos el PIN1 con el boton decremento
 ;							Programa principal 	
 ; =========================================================================
 main:
-	IN		R20, PINC		; Leemos el puerto D y lo guardamos en R20
+	IN		R20, PINC		; Leemos el puerto C y lo guardamos en R20
 	CP		R24, R20		; Comparamos R24 - R20 (0b0000_0001 - R20)
 	BREQ	increment		; Si Z=1
 	CP		R25, R20		; Comparamos R25 - R20 (0b0000_0010 - R20)
@@ -60,7 +60,7 @@ increment:
 	INC		R21				; Si no, incrementa las unidades
 	loop_inc:				; Loop para no volver a incrementar si el boton lo dejan presionado
 		CLZ					; Reseteamos la flag Zero
-		IN		R20, PINC	; Leemos el puerto D y lo guardamos en R20
+		IN		R20, PINC	; Leemos el puerto C y lo guardamos en R20
 		CP		R24, R20	; Comparamos R24 - R20 (0b0000_0001 - R20)	
 							; Si R20 sigue teniendo el valor 0b0000_0001 entonces el resultado sera 0
 							; Y se levantara la flag Zero
@@ -106,7 +106,7 @@ decrement:
 	DEC		R21				; Si no, decrementa las unidades
 	loop_dec:				; Loop para no volver a incrementar si el boton lo dejan presionado
 		CLZ					; Reseteamos la flag Zero
-		IN		R20, PINC	; Leemos el puerto D y lo guardamos en R20
+		IN		R20, PINC	; Leemos el puerto C y lo guardamos en R20
 		CP		R25, R20	; Comparamos R25 - R20 (0b0000_0010 - R20)	
 							; Si R20 sigue teniendo el valor 0b0000_0010 entonces el resultado sera 0
 							; Y se levantara la flag Zero
