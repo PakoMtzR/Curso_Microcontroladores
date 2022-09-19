@@ -39,7 +39,6 @@ send_data:
 	RCALL	enable_digit_3
 	RCALL	send_digit
 	RCALL	delay_1ms
-	;RJMP main
 	RET
 
 send_digit:
@@ -71,53 +70,53 @@ send_digit:
 ; Enviar: 0b0011111 => Visualizar: 0
 ; -------------------------------------------------------------------------
 send_0:
-	LDI	R16,	0x3F ; 0b0001_1111 => 0
-	OUT PORTA,	R16		
-	RJMP next_digit
+	LDI		R16,	0x3F ; 0b0001_1111 => 0
+	OUT		PORTA,	R16		
+	RJMP	next_digit
 
 send_1:
-	LDI	R16,	0x06 ; 0b0000_0110 =>	1
-	OUT PORTA,	R16
+	LDI		R16,	0x06 ; 0b0000_0110 =>	1
+	OUT		PORTA,	R16
 	RJMP	next_digit
 
 send_2:
-	LDI	R16,	0x5B ; 0b0101_1011 =>	2
-	OUT PORTA,	R16	
+	LDI		R16,	0x5B ; 0b0101_1011 =>	2
+	OUT		PORTA,	R16	
 	RJMP	next_digit
 
 send_3:
-	LDI	R16,	0x4F ; 0b0100_1111 =>	3
-	OUT PORTA,	R16
+	LDI		R16,	0x4F ; 0b0100_1111 =>	3
+	OUT		PORTA,	R16
 	RJMP	next_digit
 
 send_4:
-	LDI	R16,	0x66 ; 0b0110_0110 =>	4
-	OUT PORTA,	R16		
+	LDI		R16,	0x66 ; 0b0110_0110 =>	4
+	OUT		PORTA,	R16		
 	RJMP	next_digit
 
 send_5:
-	LDI	R16,	0x6D ; 0b0110_1101 =>	5
-	OUT PORTA,	R16
+	LDI		R16,	0x6D ; 0b0110_1101 =>	5
+	OUT		PORTA,	R16
 	RJMP	next_digit
 
 send_6:
-	LDI	R16,	0x7D ; 0b0111_1101 =>	6
-	OUT PORTA,	R16
+	LDI		R16,	0x7D ; 0b0111_1101 =>	6
+	OUT		PORTA,	R16
 	RJMP	next_digit
 
 send_7:
-	LDI	R16,	0x07 ; 0b0000_0111 =>	7
-	OUT PORTA,	R16
+	LDI		R16,	0x07 ; 0b0000_0111 =>	7
+	OUT		PORTA,	R16
 	RJMP	next_digit
 
-send_8:
-	LDI	R16,	0x7F ; 0b0111_1111 =>	8
-	OUT PORTA,	R16
+send_8:	
+	LDI		R16,	0x7F ; 0b0111_1111 =>	8
+	OUT		PORTA,	R16
 	RJMP	next_digit
 
 send_9:
-	LDI	R16,	0x6F ; 0b0110_1111 =>	9
-	OUT PORTA,	R16
+	LDI		R16,	0x6F ; 0b0110_1111 =>	9
+	OUT		PORTA,	R16
 	RJMP	next_digit	
 ; =========================================================================
 
