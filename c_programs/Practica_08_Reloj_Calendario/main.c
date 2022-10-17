@@ -159,8 +159,20 @@ ISR(TIMER0_OVF_vect)
 			{
 				if (time[1] == 59)
 				{
-					if (time[2] == 23) time[2] = 0;
-					else time[2]++;
+					if (time[2] == 23) 
+                                        {
+                                            time[2] = 0;
+                                            if (date[0] == 31)
+                                            {date[0] = 1;
+                                                if (date[1] == 12)
+                                                {date[1] = 1;
+                                                    if (date[2] == 99) date[2] = 0;
+                                                    else date[2]++;
+                                                } 
+                                            }
+                                            else date[0]++;
+                                        }
+	  				else time[2]++;
 					
 					time[1] = 0;
 					time[0] = 0;
