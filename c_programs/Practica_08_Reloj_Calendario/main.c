@@ -18,30 +18,36 @@
 #define KEYPAD_PIN PINK
 #define KEYPAD_CONFIG DDRK
 
-// Declaracion de variables
-// ---------------------------------------------------------
-uint8_t time[3] = {0, 0, 0};	// {seconds, minutes, hours};
-uint8_t date[3] = {16, 10, 22};	// {days, month, years};
+/******************************************************************************
+							DECLARACIOND DE VARIABLES
+******************************************************************************/
+uint8_t time[3] = {50, 59, 17};	// {seconds, minutes, hours};
+uint8_t date[3] = {1, 10, 2};	// {days, month, years};
 
-char time_str[3][3]; // --> [3][3] -> {"HH\0", "MM\0", "SS\0"}  (\0 caracter nulo)
-char date_str[3][3];
+char time_str[3][3];	// --> [3][3] -> {"SS\0", "MM\0", "HH\0"}  (\0 caracter nulo)
+char date_str[3][3];	// --> [3][3] -> {"DD\0", "MM\0", "YY\0"}  (\0 caracter nulo)
 
-char time_LCD[16];	// Variable donde guardaremos el texto
-					// del tiempo que se enviara al LCD
-char date_LCD[16];	// Variable donde guardaremos el texto
-					// del tiempo que se enviara al LCD
+// Cadenas de texto para enviar al LCD (Dia y la hora)
+char time_LCD[16];
+char date_LCD[16];
+
 uint8_t data = 0;
 char key;
 
-uint8_t i = 0;	// Variable para el contador del LCD
-uint8_t run_time = 1;
+uint8_t i = 0;			// Variable para el contador del LCD
+uint8_t run_time = 1;	// Variable para pausar o reanudar la interrupcion de reloj
 
-
-// Declaracion de Funciones
-// ---------------------------------------------------------
+uint8_t pos_config = 1;
+/******************************************************************************
+							DECLARACION DE FUNCIONES
+******************************************************************************/
 void send_time(void);
 void send_date(void);
 char keypad(void);
+void move_left(void);
+void move_right(void);
+void decrement(void);
+void increment(void);
 
 int main(void)
 {
@@ -66,12 +72,36 @@ int main(void)
 	
 	while (1) 
     {
-		//key = keypad();
-		//if (key != '\0')
-		//{
-			//lcd_goto_xy(0, 0);
-			//lcd_send_char(key);
-		//}
+		_delay_ms(10);
+		key = keypad();
+		if (key != '\0')
+		{
+			switch(key)
+			{
+				case 'A': 
+					run_time = 0;
+					break;
+				case 'B': 
+					run_time = 1;
+					break;
+				case '*': 
+					if (run_time == 0) move_left();
+					break;
+				case '#': 
+					if (run_time == 0) move_right();
+					break;
+				case 'C': 
+					if (run_time == 0) increment();
+					break;
+				case 'D': 
+					if (run_time == 0) decrement();
+					break;
+				default:
+					break;
+			}
+			send_date();
+			send_time();
+		}
     }
 }
 /******************************************************************************
@@ -90,7 +120,7 @@ void send_time(void)
 	sprintf(time_LCD,"[time]: %s:%s:%s", time_str[2], time_str[1], time_str[0]);
 	
 	// Enviar el tiempo al LCD
-	lcd_goto_xy(1, 0);			// Nos movemos a la linea inferior en la primera casilla
+	lcd_goto_xy(1, 0);				// Nos movemos a la linea inferior en la primera casilla
 	lcd_send_string(time_LCD);		// Escribimos el tiempo en el LCD
 }
 
@@ -103,12 +133,12 @@ void send_date(void)
 		else sprintf(date_str[k], "%d", date[k]);
 	}
 
-	// Concatenar el tiempo => [time]: 00:00:00
+	// Concatenar la fecha => [date]: 01/10/02
 	sprintf(date_LCD,"[date]: %s/%s/%s", date_str[0], date_str[1], date_str[2]);
 	
-	// Enviar el tiempo al LCD
-	lcd_goto_xy(0, 0);			// Nos movemos a la linea inferior en la primera casilla
-	lcd_send_string(date_LCD);		// Escribimos el tiempo en el LCD
+	// Enviar la fecha al LCD
+	lcd_goto_xy(0, 0);				// Nos movemos a la linea superior en la primera casilla
+	lcd_send_string(date_LCD);		// Escribimos la fecha en el LCD
 }
 
 char keypad(void)
@@ -139,11 +169,83 @@ char keypad(void)
 	return '\0';	// Caracter nulo						
 }
 
-void command(char cmd)
+void move_right(void)
 {
-	
+	if (pos_config < 6) pos_config++;
+	else pos_config = 1;
 }
 
+void move_left(void)
+{
+	if (pos_config > 1) pos_config--;
+	else pos_config = 6;
+}
+
+void increment(void)
+{
+	switch(pos_config)
+	{
+		case 1: 
+			if (date[0] < 31) date[0]++;
+			else date[0] = 1;
+			break;
+		case 2:
+			if (date[1] < 12) date[1]++;
+			else date[1] = 1;
+			break;
+		case 3:
+			if (date[2] < 99) date[2]++;
+			else date[2] = 0;
+			break;
+		case 4:
+			if (time[2] < 23) time[2]++;
+			else time[2] = 0;
+			break;
+		case 5:
+			if (time[1] < 59) time[1]++;
+			else time[1] = 1;
+			break;
+		case 6:
+			if (time[0] < 59) time[0]++;
+			else time[0] = 1;
+			break;
+		default:
+			break;
+	}
+}
+
+void decrement(void)
+{
+	switch(pos_config)
+	{
+		case 1:
+			if (date[0] > 1) date[0]--;
+			else date[0] = 31;
+			break;
+		case 2:
+			if (date[1] > 1) date[1]--;
+			else date[1] = 12;
+			break;
+		case 3:
+			if (date[2] > 0) date[2]--;
+			else date[2] = 99;
+			break;
+		case 4:
+			if (time[2] > 0) time[2]--;
+			else time[2] = 23;
+			break;
+		case 5:
+			if (time[1] > 1) time[1]--;
+			else time[1] = 59;
+			break;
+		case 6:
+			if (time[0] > 1) time[0]--;
+			else time[0] = 59;
+			break;
+		default:
+			break;
+	}
+}
 /******************************************************************************
 						INTERRUPCIONES INTERNAS (TIMER)
 ******************************************************************************/
@@ -154,33 +256,41 @@ ISR(TIMER0_OVF_vect)
 		i++;
 		if (i >= 61)
 		{
-			// Incrementar seconds
-			if (time[0] == 59)
+			if (time[0] == 59) // Si segundos llego a 59 => hh:mm:59
 			{
-				if (time[1] == 59)
+				time[0] = 0;	// Resetear segundos 01:59 -> 02:00	
+				
+				if (time[1] == 59)	// Si minutos llego a 59 => hh:59:59 
 				{
-					if (time[2] == 23) 
-                                        {
-                                            time[2] = 0;
-                                            if (date[0] == 31)
-                                            {date[0] = 1;
-                                                if (date[1] == 12)
-                                                {date[1] = 1;
-                                                    if (date[2] == 99) date[2] = 0;
-                                                    else date[2]++;
-                                                } 
-                                            }
-                                            else date[0]++;
-                                        }
-	  				else time[2]++;
+					time[1] = 0;	// Resetear minutos y segundos 02:59:59 -> 03:00:00
 					
-					time[1] = 0;
-					time[0] = 0;
+					if (time[2] == 23) // Si horas llego a 23 => 23:59:59
+					{
+						time[2] = 0;	// Resetear minutos, segundos y horas 23:59:59 -> 00:00:00
+						
+						if (date[0] == 31)
+						{
+							date[0] = 1;	// Resetear dia 31/MM/YY => 01/MM+1/YY
+							
+							if (date[1] == 12)
+							{
+								date[1] = 1;	// Resetear dia y el mes 31/12/YY => 01/01/YY+1
+								
+								if (date[2] == 99)
+								{
+									date[2] = 0;	// Resetear dia, el mes y el anno 31/12/99 => 01/01/00
+								}
+								else date[2]++;	// Incrementar año
+							}
+							else date[1]++;	// Incrementar mes
+						}
+						else date[0]++;	// Incrementar dia
+					}
+					else time[2]++;	// Incrementar horas
 				}
-				else time[1]++;
-				time[0] = 0;
+				else time[1]++;	// Incrementar minutos
 			}
-			else time[0]++;
+			else time[0]++;	// Incrementar segundos
 			
 			send_time();
 			i = 0;
