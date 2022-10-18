@@ -203,11 +203,11 @@ void increment(void)
 			break;
 		case 5:
 			if (time[1] < 59) time[1]++;
-			else time[1] = 1;
+			else time[1] = 0;
 			break;
 		case 6:
 			if (time[0] < 59) time[0]++;
-			else time[0] = 1;
+			else time[0] = 0;
 			break;
 		default:
 			break;
