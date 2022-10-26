@@ -59,9 +59,9 @@ int main(void)
 	DDRF |= (1<<DDF5);
 	
 	// Apagamos los leds 
-	PORTH &= ~(1<<PORTF0);
-	PORTL &= ~(1<<PORTF2);
-	PORTC &= ~(1<<PORTF6);
+	PORTH &= ~(1<<PORTH0);
+	PORTL &= ~(1<<PORTL2);
+	PORTC &= ~(1<<PORTC6);
 	PORTF &= ~(1<<PORTF5);
 	
 	sei();	// Habilitamos las interrupciones
